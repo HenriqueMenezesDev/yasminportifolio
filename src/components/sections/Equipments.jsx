@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { equipments } from '../../data/content'
+import LazyImage from '../common/LazyImage'
 
 export default function Equipments() {
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -31,7 +32,7 @@ export default function Equipments() {
         {/* Carousel Visuals */}
         <div className="relative h-[400px] md:h-[500px] rounded-3xl overflow-hidden bg-neutral-100 shadow-xl border border-black/5 group">
           <AnimatePresence mode="wait">
-            <motion.img
+            <LazyImage
               key={currentIndex}
               src={equipments[currentIndex].image}
               alt={equipments[currentIndex].name}
@@ -39,7 +40,8 @@ export default function Equipments() {
               animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
               exit={{ opacity: 0, scale: 0.95, filter: "blur(10px)" }}
               transition={{ duration: 0.8, ease: "easeInOut" }}
-              className="absolute inset-0 w-full h-full object-cover"
+              className="absolute inset-0 w-full h-full"
+              imgClassName="object-cover"
               onError={(e) => {
                 e.target.src = "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" // Fallback se a imagem não existir
               }}

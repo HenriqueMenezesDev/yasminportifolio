@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import LazyImage from '../common/LazyImage'
 
 export default function About() {
   return (
@@ -12,12 +13,14 @@ export default function About() {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="relative h-[600px] w-full bg-neutral-100 rounded-3xl overflow-hidden group"
         >
-          {/* Placeholder for Yasmin's Photo - we use a creative gradient background if no photo */}
+          {/* Background overlay */}
           <div className="absolute inset-0 bg-gradient-to-tr from-primary/60 to-accent/40 mix-blend-overlay z-10"></div>
-          <img 
+          
+          <LazyImage 
             src="/media/yasmin.jpeg" 
             alt="Yasmin Rocha" 
-            className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-700" 
+            className="w-full h-full" 
+            imgClassName="filter grayscale group-hover:grayscale-0 transition-all duration-700" 
           />
           
           {/* Floating badge */}

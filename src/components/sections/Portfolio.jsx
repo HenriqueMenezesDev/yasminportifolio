@@ -1,10 +1,13 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, memo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowUpRight, ChevronRight, ChevronLeft } from 'lucide-react'
 import { projects } from '../../data/content'
+import LazyImage from '../common/LazyImage'
+import LazyVideo from '../common/LazyVideo'
 
 // Sub-componente mágico para lidar individualmente com Imagens, Vídeos (Hover) e Carrosséis
-const MediaCard = ({ project }) => {
+// Memoizado via React.memo para evitar re-renderizações no filtro central
+const MediaCard = memo(({ project }) => {
   const [currentIdx, setCurrentIdx] = useState(0)
   const videoRef = useRef(null)
 
@@ -37,36 +40,37 @@ const MediaCard = ({ project }) => {
       onMouseLeave={handleMouseLeave}
     >
       {project.type === 'image' && (
-        <img 
+        <LazyImage 
           src={project.src} 
           alt={project.title}
-          className="w-full h-full object-cover scale-100 group-hover:scale-110 transition-transform duration-[1.5s] ease-out filter grayscale-0 md:grayscale-[50%] md:group-hover:grayscale-0"
+          className="w-full h-full"
+          imgClassName="scale-100 group-hover:scale-110 transition-transform duration-[1.5s] ease-out filter grayscale-0 md:grayscale-[50%] md:group-hover:grayscale-0"
         />
       )}
 
       {project.type === 'video' && (
-        <video 
+        <LazyVideo 
           ref={videoRef}
           src={project.src} 
-          muted 
-          loop 
-          playsInline
-          className="w-full h-full object-cover scale-100 group-hover:scale-105 transition-transform duration-[1s]"
+          className="w-full h-full"
+          videoClassName="w-full h-full object-cover scale-100 group-hover:scale-105 transition-transform duration-[1s]"
+          posterColor={project.color ? project.color.replace('from-', '#') : '#f5f5f5'}
         />
       )}
 
       {project.type === 'carousel' && (
         <div className="w-full h-full relative">
           <AnimatePresence mode="wait">
-            <motion.img
+            <LazyImage
               key={currentIdx}
               src={project.images[currentIdx]}
               alt={`${project.title} - ${currentIdx}`}
+              className="absolute inset-0 w-full h-full"
+              imgClassName="scale-100 group-hover:scale-105 transition-transform duration-[1.5s] ease-out"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="absolute inset-0 w-full h-full object-cover scale-100 group-hover:scale-105 transition-transform duration-[1.5s] ease-out"
             />
           </AnimatePresence>
           
@@ -90,7 +94,9 @@ const MediaCard = ({ project }) => {
       )}
     </div>
   )
-}
+})
+
+Portfolio.displayName = 'Portfolio'
 
 export default function Portfolio() {
   const [filter, setFilter] = useState("Todos")
@@ -151,7 +157,7 @@ export default function Portfolio() {
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.5, ease: "easeOut" }}
               className={`group relative h-[500px] md:h-[600px] rounded-3xl overflow-hidden cursor-pointer shadow-sm hover:shadow-xl transition-shadow ${
-                index % 2 !== 0 && window.innerWidth >= 768 ? 'md:translate-y-12' : ''
+                index % 2 !== 0 && typeof window !== 'undefined' && window.innerWidth >= 768 ? 'md:translate-y-12' : ''
               }`}
             >
               <MediaCard project={project} />
