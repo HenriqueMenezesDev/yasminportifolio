@@ -66,6 +66,7 @@ export const projects = [
     category: "Storymaking e Edição",
     title: "Refresh",
     src: "/media/refresh.mov",
+    poster: null,
     color: "from-accent"
   },
   {
@@ -75,6 +76,7 @@ export const projects = [
     category: "Eventos & Edição",
     title: "Confra Sanama",
     src: "/media/confra.mov",
+    poster: null,
     color: "from-primary"
   },
   {
@@ -84,6 +86,7 @@ export const projects = [
     category: "Filmmaker",
     title: "Convenção Guido",
     src: "/media/guido.mov",
+    poster: null,
     color: "from-emerald-500"
   },
   {
@@ -93,6 +96,7 @@ export const projects = [
     category: "Fashion Reels",
     title: "Varejo Moda",
     src: "/media/moda.mov",
+    poster: null,
     color: "from-teal-500"
   },
   {

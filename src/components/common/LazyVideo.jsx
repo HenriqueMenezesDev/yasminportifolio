@@ -35,7 +35,7 @@ const LazyVideo = forwardRef(({ src, className, videoClassName, posterColor, ...
         <video
           ref={videoRef}
           src={`${src}#t=0.1`} // Media Fragments to show the first frame efficiently
-          preload="metadata"
+          preload={props.preload || "metadata"}
           muted
           loop
           playsInline

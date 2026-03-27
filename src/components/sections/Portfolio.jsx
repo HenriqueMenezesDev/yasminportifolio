@@ -1,27 +1,15 @@
 import { useState, useRef, memo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowUpRight, ChevronRight, ChevronLeft } from 'lucide-react'
+import { ArrowUpRight, ChevronRight, ChevronLeft, Play } from 'lucide-react'
 import { projects } from '../../data/content'
 import LazyImage from '../common/LazyImage'
 import LazyVideo from '../common/LazyVideo'
 
 // Sub-componente mágico para lidar individualmente com Imagens, Vídeos (Hover) e Carrosséis
 // Memoizado via React.memo para evitar re-renderizações no filtro central
-const MediaCard = memo(({ project }) => {
+const MediaCard = memo(({ project, isPlaying, onTogglePlay }) => {
   const [currentIdx, setCurrentIdx] = useState(0)
   const videoRef = useRef(null)
-
-  const handleMouseEnter = () => {
-    if (project.type === 'video' && videoRef.current) {
-      videoRef.current.play().catch(e => console.log("Autoplay pré-impedido:", e))
-    }
-  }
-
-  const handleMouseLeave = () => {
-    if (project.type === 'video' && videoRef.current) {
-      videoRef.current.pause()
-    }
-  }
 
   const handleNext = (e) => {
     e.stopPropagation()
@@ -33,11 +21,18 @@ const MediaCard = memo(({ project }) => {
     setCurrentIdx((prev) => (prev === 0 ? project.images.length - 1 : prev - 1))
   }
 
+  const handleClick = (e) => {
+    // Se for vídeo, alterna o play
+    if (project.type === 'video') {
+      onTogglePlay()
+    }
+    // Para imagens/carrosséis, o comportamento padrão do layout é mantido (nenhum clique especial exceto setas)
+  }
+
   return (
     <div 
       className="absolute inset-0 bg-neutral-100"
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
+      onClick={handleClick}
     >
       {project.type === 'image' && (
         <LazyImage 
@@ -49,13 +44,59 @@ const MediaCard = memo(({ project }) => {
       )}
 
       {project.type === 'video' && (
-        <LazyVideo 
-          ref={videoRef}
-          src={project.src} 
-          className="w-full h-full"
-          videoClassName="w-full h-full object-cover scale-100 group-hover:scale-105 transition-transform duration-[1s]"
-          posterColor={project.color ? project.color.replace('from-', '#') : '#f5f5f5'}
-        />
+        <div className="w-full h-full relative overflow-hidden">
+          <AnimatePresence mode="wait">
+            {!isPlaying ? (
+              <motion.div 
+                key="poster"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="w-full h-full"
+              >
+                {/* Poster Image or Fallback */}
+                {project.poster ? (
+                  <LazyImage 
+                    src={project.poster} 
+                    alt={project.title}
+                    className="w-full h-full"
+                    imgClassName="w-full h-full object-cover scale-100 group-hover:scale-105 transition-transform duration-[1.5s]"
+                  />
+                ) : (
+                  <div className={`w-full h-full bg-gradient-to-br ${project.color.replace('from-', 'from-')}/20 to-neutral-200 flex items-center justify-center`}>
+                    <div className="text-black/5 uppercase tracking-tighter text-9xl font-bold select-none rotate-12">
+                      VIDEO
+                    </div>
+                  </div>
+                )}
+                
+                {/* Play Button Overlay */}
+                <div className="absolute inset-0 flex items-center justify-center z-20">
+                  <div className="w-16 h-16 rounded-full bg-accent/90 text-white flex items-center justify-center shadow-2xl backdrop-blur-sm transform group-hover:scale-110 transition-transform duration-300">
+                    <Play className="w-8 h-8 fill-current ml-1" />
+                  </div>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div 
+                key="video"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="w-full h-full"
+              >
+                <LazyVideo 
+                  ref={videoRef}
+                  src={project.src} 
+                  autoPlay
+                  className="w-full h-full"
+                  videoClassName="w-full h-full object-cover scale-100 group-hover:scale-105 transition-transform duration-[1s]"
+                  posterColor={project.color ? project.color.replace('from-', '#') : '#f5f5f5'}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       )}
 
       {project.type === 'carousel' && (
@@ -74,7 +115,6 @@ const MediaCard = memo(({ project }) => {
             />
           </AnimatePresence>
           
-          {/* Controles de Carrossel Invisíveis no desktop até o hover, ou com toque no mobile */}
           <div className="absolute inset-x-4 top-1/2 -translate-y-1/2 flex justify-between z-30 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
             <button onClick={handlePrev} className="bg-white/80 p-2 rounded-full text-black hover:bg-white transition-colors">
               <ChevronLeft className="w-5 h-5" />
@@ -84,7 +124,6 @@ const MediaCard = memo(({ project }) => {
             </button>
           </div>
           
-          {/* Indicadores do Carrossel */}
           <div className="absolute top-4 inset-x-0 flex justify-center gap-2 z-30">
             {project.images.map((_, i) => (
               <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${i === currentIdx ? 'w-6 bg-accent' : 'w-2 bg-white/50'}`} />
@@ -100,12 +139,17 @@ Portfolio.displayName = 'Portfolio'
 
 export default function Portfolio() {
   const [filter, setFilter] = useState("Todos")
+  const [playingProjectId, setPlayingProjectId] = useState(null)
   
   const filters = ["Todos", "Vídeos", "Fotos"]
   
   const filteredProjects = filter === "Todos" 
     ? projects 
     : projects.filter(p => p.filter === filter)
+
+  const handleTogglePlay = (id) => {
+    setPlayingProjectId(prev => prev === id ? null : id)
+  }
 
   return (
     <section id="portfolio" className="py-24 px-6 md:px-12 max-w-7xl mx-auto bg-white text-black">
@@ -133,7 +177,10 @@ export default function Portfolio() {
           {filters.map(f => (
             <button 
               key={f}
-              onClick={() => setFilter(f)}
+              onClick={() => {
+                setFilter(f)
+                setPlayingProjectId(null) // Reset playback on filter change
+              }}
               className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-300 border ${
                 filter === f 
                 ? "bg-black text-white border-black shadow-md" 
@@ -160,7 +207,11 @@ export default function Portfolio() {
                 index % 2 !== 0 && typeof window !== 'undefined' && window.innerWidth >= 768 ? 'md:translate-y-12' : ''
               }`}
             >
-              <MediaCard project={project} />
+              <MediaCard 
+                project={project} 
+                isPlaying={playingProjectId === project.id}
+                onTogglePlay={() => handleTogglePlay(project.id)}
+              />
 
               {/* Overlay Gradient */}
               <div className={`absolute inset-0 bg-gradient-to-t ${project.color} via-black/40 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500 pointer-events-none`}></div>
