@@ -65,7 +65,7 @@ export const projects = [
     filter: "Vídeos",
     category: "Storymaking e Edição",
     title: "Refresh",
-    src: "/media/refresh.mov",
+    src: "/media/refresh.mp4",
     poster: null,
     color: "from-accent"
   },
@@ -75,7 +75,7 @@ export const projects = [
     filter: "Vídeos",
     category: "Eventos & Edição",
     title: "Confra Sanama",
-    src: "/media/confra.mov",
+    src: "/media/confra.mp4",
     poster: null,
     color: "from-primary"
   },
@@ -85,7 +85,7 @@ export const projects = [
     filter: "Vídeos",
     category: "Filmmaker",
     title: "Convenção Guido",
-    src: "/media/guido.mov",
+    src: "/media/guido.mp4",
     poster: null,
     color: "from-emerald-500"
   },
@@ -95,7 +95,7 @@ export const projects = [
     filter: "Vídeos",
     category: "Fashion Reels",
     title: "Varejo Moda",
-    src: "/media/moda.mov",
+    src: "/media/moda.mp4",
     poster: null,
     color: "from-teal-500"
   },
