@@ -66,7 +66,7 @@ export const projects = [
     category: "Storymaking e Edição",
     title: "Refresh",
     src: "/media/refresh.mp4",
-    poster: null,
+    poster: "/media/capa video Refresh.PNG",
     color: "from-accent"
   },
   {
@@ -76,7 +76,7 @@ export const projects = [
     category: "Eventos & Edição",
     title: "Confra Sanama",
     src: "/media/confra.mp4",
-    poster: null,
+    poster: "/media/capa video Sanama.PNG",
     color: "from-primary"
   },
   {
@@ -86,7 +86,7 @@ export const projects = [
     category: "Filmmaker",
     title: "Convenção Guido",
     src: "/media/guido.mp4",
-    poster: null,
+    poster: "/media/capa video convenção guido.PNG",
     color: "from-emerald-500"
   },
   {
@@ -94,9 +94,9 @@ export const projects = [
     type: "video",
     filter: "Vídeos",
     category: "Fashion Reels",
-    title: "Varejo Moda",
+    title: "Documentário Casa Vieira",
     src: "/media/moda.mp4",
-    poster: null,
+    poster: "/media/capa video documentario casa vieira.PNG",
     color: "from-teal-500"
   },
   {
