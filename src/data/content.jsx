@@ -44,9 +44,9 @@ export const equipments = [
   },
   {
     id: 3,
-    name: "H'Maston MK22",
+    name: "Hollyland lark m2",
     role: "Microfone: Captação de áudio limpa e profissional",
-    image: "/media/microfone.jpeg",
+    image: "/media/hollyland-lark-m2.webp",
     icon: <Mic className="w-5 h-5" />
   },
   {
